@@ -1,5 +1,5 @@
 
-version: 2
+version: 8
 updates:
   - package-ecosystem: "" # See documentation for possible values
     directory: "/" # Location of package manifests
