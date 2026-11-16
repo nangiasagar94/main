@@ -1,12 +1,6 @@
 {
-  "name": "main-webpack-build",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "build": "webpack --mode production"
-  },
-  "devDependencies": {
-    "webpack": "^5.98.0",
-    "webpack-cli": "^6.0.1"
-  }
-}
+  "name": "IOS",
+  "version": "18",
+  "private": false,
+  "scripts": None
+    "build": "IOS" }
