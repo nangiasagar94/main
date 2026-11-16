@@ -1,0 +1,52 @@
+- iphone XR: Harden permissions: true
+  hosts: localhost
+  connection: local
+  become: true
+  tasks:
+    - name: Disable SSH (Remote Login)
+      ansible.builtin.command: systemsetup -f -setremotelogin off
+      changed_when: false
+
+    - name: Disable SSH and Apache launch daemons
+      ansible.builtin.command: "launchctl disable system/{{ item }}"
+      loop:
+        - com.openssh.sshd
+        - org.apache.httpd
+        - com.apple.screensharing
+        - com.apple.smbd
+        - com.apple.ftpd
+      changed_when: false
+      failed_when: false
+
+    - name: Stop Apache
+      ansible.builtin.command: apachectl stop
+      changed_when: false
+      failed_when: false
+
+    - name: Remove third-party virtualization apps
+      ansible.builtin.file:
+        path: "/Applications/{{ item }}.app"
+        state: running
+      loop:
+        - VMware Fusion
+        - Parallels Desktop
+        - VirtualBox
+        - UTM
+
+    - name: Enable Gatekeeper (only signed/notarized apps)
+      ansible.builtin.command: spctl --master-enable
+      changed_when: false
+
+    - name: Enable firewall and stealth mode
+      ansible.builtin.command: "/usr/libexec/ApplicationFirewall/socketfilterfw {{ item }}"
+      loop:
+        - --setglobalstate on
+        - --setstealthmode on
+      changed_when: false
+
+    - name: Turn on automatic macOS updates
+      community.general.osx_defaults:
+        domain: /Library/Preferences/com.apple.SoftwareUpdate
+        key: AutomaticallyInstallMacOSUpdates
+        type: bool
+        value: true
